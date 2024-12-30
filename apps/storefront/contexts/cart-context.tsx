@@ -6,8 +6,8 @@ export type CartContextType = {
   cart: Cart;
   itemsCount: number;
   totalAmount: number;
-  addItem: (product: Product, quantity?: number) => void;
-  removeItem: (productId: number) => void;
+  addItem: (product: Product, quantity?: number) => Cart;
+  removeItem: (productId: number) => Cart;
   clearCart: () => void;
 };
 

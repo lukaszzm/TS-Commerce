@@ -1,4 +1,3 @@
-import { json, urlencoded } from "body-parser";
 import express, { type Express } from "express";
 import morgan from "morgan";
 import cors from "cors";
@@ -9,8 +8,8 @@ export const createServer = (): Express => {
   app
     .disable("x-powered-by")
     .use(morgan("dev"))
-    .use(urlencoded({ extended: true }))
-    .use(json())
+    .use(express.json())
+    .use(express.urlencoded({ extended: true }))
     .use(cors())
     .use(api);
 

@@ -1,51 +1,49 @@
+"use client";
+
 import { CartContext } from "@/contexts/cart-context";
 import { Cart } from "@/schemas/cart-schema";
 import { Product } from "@/types";
-import {
-  getCartFromLocalStorage,
-  saveCartToLocalStorage,
-} from "@/utils/cart-local-storage";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useOptimistic } from "react";
 
 interface CartProviderProps {
   children: React.ReactNode;
+  initCart: Cart | null;
 }
 
-export function CartProvider({ children }: CartProviderProps) {
-  const [cart, setCart] = useState<Cart>(getCartFromLocalStorage() ?? []);
+export function CartProvider({ children, initCart }: CartProviderProps) {
+  const [cart, setCart] = useOptimistic<Cart>(initCart ?? []);
 
-  const addItem = useCallback((product: Product, quantity: number = 1) => {
-    setCart((items) => {
-      const existingItem = items.find((item) => item.product.id === product.id);
+  const addItem = useCallback(
+    (product: Product, quantity: number = 1) => {
+      const existingItem = cart.find((item) => item.product.id === product.id);
 
       if (existingItem) {
-        return items.map((item) =>
+        return cart.map((item) =>
           item.product.id === product.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
 
-      const newCart = [...items, { product, quantity }];
+      const newCart = [...cart, { product, quantity }];
 
-      saveCartToLocalStorage(newCart);
+      setCart(newCart);
       return newCart;
-    });
-  }, []);
+    },
+    [cart, setCart]
+  );
 
-  const removeItem = useCallback((productId: number) => {
-    setCart((items) => {
-      const newCart = items.filter((item) => item.product.id !== productId);
+  const removeItem = useCallback(
+    (productId: number) => {
+      const newCart = cart.filter((item) => item.product.id !== productId);
 
-      saveCartToLocalStorage(newCart);
+      setCart(newCart);
       return newCart;
-    });
-  }, []);
+    },
+    [cart, setCart]
+  );
 
-  const clearCart = useCallback(() => {
-    saveCartToLocalStorage([]);
-    setCart([]);
-  }, []);
+  const clearCart = useCallback(() => setCart([]), [setCart]);
 
   const value = useMemo(
     () => ({

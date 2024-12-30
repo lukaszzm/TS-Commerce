@@ -18,6 +18,15 @@ async function main() {
 
   const db = drizzle({ client: pool, schema });
 
+  const seedUser = {
+    id: 1,
+    name: "Test user",
+  };
+
+  console.log("Seeding user...");
+  await db.insert(schema.users).values(seedUser).execute();
+  console.log("User seeded");
+
   const seedCategories = [
     {
       id: 1,
@@ -37,7 +46,7 @@ async function main() {
   ];
 
   console.log("Seeding categories...");
-  const result = await db.insert(categories).values(seedCategories).execute();
+  await db.insert(categories).values(seedCategories).execute();
   console.log("Categories seeded");
 
   const seedProducts = [

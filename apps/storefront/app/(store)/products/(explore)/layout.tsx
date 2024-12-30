@@ -15,10 +15,10 @@ export default function ProductExploreLayout({
   return (
     <>
       <Banner />
-      <main className="container mx-auto p-4 flex gap-2">
+      <div className="container mx-auto p-4 flex gap-2">
         {categories}
         {products}
-      </main>
+      </div>
       {children}
     </>
   );

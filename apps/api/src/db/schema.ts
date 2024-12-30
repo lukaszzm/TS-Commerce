@@ -32,40 +32,41 @@ export const categories = pgTable("categories", {
 
 export const users = pgTable("users", {
   id: serial().primaryKey(),
+  name: text().notNull(),
   role: text().default("user"),
 });
 
-export const carts = pgTable("carts", {
+export const orders = pgTable("orders", {
   id: serial().primaryKey(),
   userId: integer().notNull(),
 });
 
-export const productsToCarts = pgTable(
-  "products_to_carts",
+export const productsToOrders = pgTable(
+  "products_to_orders",
   {
     productId: integer()
       .notNull()
       .references(() => products.id),
-    cartId: integer()
+    orderId: integer()
       .notNull()
-      .references(() => carts.id),
+      .references(() => orders.id),
     quantity: integer().notNull(),
   },
   (t) => ({
-    pk: primaryKey({ columns: [t.productId, t.cartId] }),
+    pk: primaryKey({ columns: [t.productId, t.orderId] }),
   })
 );
 
-export const productsToCartsRelations = relations(
-  productsToCarts,
+export const productsToOrdersRelations = relations(
+  productsToOrders,
   ({ one }) => ({
     product: one(products, {
-      fields: [productsToCarts.productId],
+      fields: [productsToOrders.productId],
       references: [products.id],
     }),
-    cart: one(carts, {
-      fields: [productsToCarts.cartId],
-      references: [carts.id],
+    cart: one(orders, {
+      fields: [productsToOrders.orderId],
+      references: [orders.id],
     }),
   })
 );

@@ -1,5 +1,6 @@
 "use client";
 
+import { saveCart } from "@/actions/cart";
 import { useCart } from "@/hooks/use-cart";
 import {
   AddToCartPayload,
@@ -17,6 +18,7 @@ import {
   FormMessage,
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
+import { startTransition } from "react";
 import { useForm } from "react-hook-form";
 
 interface AddToCartProps {
@@ -34,7 +36,10 @@ export function AddToCart({ product }: AddToCartProps) {
   });
 
   const onSubmit = (data: AddToCartPayload) => {
-    addItem(product, data.quantity);
+    startTransition(async () => {
+      const newCart = addItem(product, data.quantity);
+      await saveCart(newCart);
+    });
   };
 
   return (
