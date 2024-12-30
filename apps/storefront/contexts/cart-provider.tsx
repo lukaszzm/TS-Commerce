@@ -1,5 +1,10 @@
-import { CartContext, CartItem } from "@/contexts/cart-context";
+import { CartContext } from "@/contexts/cart-context";
+import { Cart } from "@/schemas/cart-schema";
 import { Product } from "@/types";
+import {
+  getCartFromLocalStorage,
+  saveCartToLocalStorage,
+} from "@/utils/cart-local-storage";
 import { useCallback, useMemo, useState } from "react";
 
 interface CartProviderProps {
@@ -7,10 +12,10 @@ interface CartProviderProps {
 }
 
 export function CartProvider({ children }: CartProviderProps) {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<Cart>(getCartFromLocalStorage() ?? []);
 
   const addItem = useCallback((product: Product, quantity: number = 1) => {
-    setCartItems((items) => {
+    setCart((items) => {
       const existingItem = items.find((item) => item.product.id === product.id);
 
       if (existingItem) {
@@ -21,25 +26,32 @@ export function CartProvider({ children }: CartProviderProps) {
         );
       }
 
-      return [...items, { product, quantity }];
+      const newCart = [...items, { product, quantity }];
+
+      saveCartToLocalStorage(newCart);
+      return newCart;
     });
   }, []);
 
   const removeItem = useCallback((productId: number) => {
-    setCartItems((items) =>
-      items.filter((item) => item.product.id !== productId)
-    );
+    setCart((items) => {
+      const newCart = items.filter((item) => item.product.id !== productId);
+
+      saveCartToLocalStorage(newCart);
+      return newCart;
+    });
   }, []);
 
   const clearCart = useCallback(() => {
-    setCartItems([]);
+    saveCartToLocalStorage([]);
+    setCart([]);
   }, []);
 
   const value = useMemo(
     () => ({
-      items: cartItems,
-      itemsCount: cartItems.reduce((count, item) => count + item.quantity, 0),
-      totalAmount: cartItems.reduce(
+      cart,
+      itemsCount: cart.reduce((count, item) => count + item.quantity, 0),
+      totalAmount: cart.reduce(
         (total, item) => total + item.product.price * item.quantity,
         0
       ),
@@ -47,7 +59,7 @@ export function CartProvider({ children }: CartProviderProps) {
       removeItem,
       clearCart,
     }),
-    [cartItems, addItem, removeItem, clearCart]
+    [cart, addItem, removeItem, clearCart]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

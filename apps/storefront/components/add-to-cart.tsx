@@ -1,6 +1,10 @@
 "use client";
 
 import { useCart } from "@/hooks/use-cart";
+import {
+  AddToCartPayload,
+  addToCartSchema,
+} from "@/schemas/add-to-cart-schema";
 import { Product } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
@@ -14,13 +18,6 @@ import {
 } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-const addToCartSchema = z.object({
-  quantity: z.coerce.number().min(1).max(999),
-});
-
-type AddToCartPayload = z.infer<typeof addToCartSchema>;
 
 interface AddToCartProps {
   product: Product;

@@ -1,13 +1,9 @@
+import { Cart } from "@/schemas/cart-schema";
 import { Product } from "@/types";
 import { createContext } from "react";
 
-export type CartItem = {
-  product: Product;
-  quantity: number;
-};
-
 export type CartContextType = {
-  items: CartItem[];
+  cart: Cart;
   itemsCount: number;
   totalAmount: number;
   addItem: (product: Product, quantity?: number) => void;
