@@ -1,5 +1,5 @@
+import { CartLink } from "@/components/cart-link";
 import { Route } from "@/config/routes";
-import { ShoppingCartIcon } from "lucide-react";
 import Link from "next/link";
 
 export function Header() {
@@ -13,8 +13,7 @@ export function Header() {
         >
           <span className="text-muted-foreground">TS</span> Commerce
         </Link>
-
-        <ShoppingCartIcon size={24} />
+        <CartLink />
       </div>
     </header>
   );

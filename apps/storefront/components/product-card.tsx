@@ -1,4 +1,5 @@
 import { Product } from "@/types";
+import { toCurrencyString } from "@/utils/to-currency-string";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -7,8 +8,6 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const fixedPrice = product.price / 100;
-
   return (
     <Link
       href={`/products/${product.id}`}
@@ -17,12 +16,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <Image src={product.image} alt={product.name} width={200} height={200} />
       <h2 className="font-semibold text-lg">{product.name}</h2>
       <p className="text-muted-foreground truncate">{product.description}</p>
-      <p className="font-semibold">
-        {fixedPrice.toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        })}
-      </p>
+      <p className="font-semibold">{toCurrencyString(product.price)}</p>
     </Link>
   );
 }
